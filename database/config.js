@@ -7,13 +7,10 @@ const dbConneccion = async ()=>{
                 useUnifiedTopology: true,
                 useCreateIndex: true
             });
-        console.log('Db Online');
     }catch (e) {
         console.log(`Error in connection ${e}`)
         throw  new Error("Error in connection DB");
     }
-
-
 
 }
 
