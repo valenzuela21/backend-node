@@ -16,8 +16,13 @@ app.use(express.json());
 /*DB Connections*/
 dbConneccion();
 
+//Routing
 app.use('/api/users', require('./routes/user.routers'));
-app.use('/api/login', require('./routes/auth'))
+app.use('/api/login', require('./routes/auth'));
+app.use('/api/hospitals', require('./routes/hospitals.routers'));
+app.use('/api/doctors', require('./routes/doctors.routers'));
+app.use('/api/search', require('./routes/search.routers'));
+app.use('/api/upload', require('./routes/uploads.routers'));
 
 /*
 * user: main_user
