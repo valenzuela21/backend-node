@@ -81,10 +81,6 @@ const returnImage  = (req, res = response) =>{
         const pathNotFound = path.join(__dirname, `../uploads/image-nofound.png`);
         res.sendFile(pathNotFound);
     }
-
-
-
-
 }
 
 module.exports = {

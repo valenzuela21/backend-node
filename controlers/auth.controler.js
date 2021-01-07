@@ -2,7 +2,7 @@ const { response }= require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const {generateJWT} = require('../helpers/jwt');
-
+const {googleVerify} = require('../helpers/google-verify');
 
 const loginAuth = async(req, res = response) => {
 
@@ -47,6 +47,54 @@ const loginAuth = async(req, res = response) => {
     }
 
 }
+
+const googleSingAuth = async (req, res = response)=>{
+    const googleToken = req.body.token;
+
+    try{
+
+        const {name, email, picture} = await googleVerify(googleToken);
+
+        //Verify exists email user
+
+        const userDB = await User.findOne({email});
+        let user;
+
+        if(!userDB){
+                    user = new User({
+                        name,
+                        email,
+                        password: '@@@@',
+                        image: picture,
+                        google: true
+                    });
+        }else{
+            //Exist User
+            user = userDB;
+            user.google = true;
+        }
+
+        await  user.save();
+
+        //Generate Json Web Token
+        const token = await generateJWT(user.id);
+
+        res.status(200).json({
+            ok: true,
+            token
+        })
+
+    }catch (e) {
+        console.log(e);
+        res.status(401).json({
+            ok: true,
+            msg: "The token is not correct...",
+        })
+    }
+
+}
+
 module.exports = {
-    loginAuth
+    loginAuth,
+    googleSingAuth
 }

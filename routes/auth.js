@@ -3,7 +3,7 @@
 */
 const {Router} = require('express');
 const {check} = require('express-validator');
-const { loginAuth } = require('../controlers/auth.controler');
+const { loginAuth, googleSingAuth } = require('../controlers/auth.controler');
 const {validateFields} = require('../middleware/validate-fields');
 const router = Router();
 
@@ -12,6 +12,11 @@ router.post('/',[
             check('password', 'He password input is required').not().isEmpty(),
             validateFields
 ], loginAuth )
+
+
+router.post('/google',[
+        check('token', 'He password input is required').not().isEmpty(),
+        validateFields], googleSingAuth);
 
 
 
