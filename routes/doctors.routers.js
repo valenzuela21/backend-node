@@ -1,7 +1,6 @@
 /*
 * URL: /api/doctors
  */
-
 const {Router} = require('express');
 const { getDoctors, postDoctors, updateDoctors, deleteDoctors } = require('../controlers/doctors.controler');
 const {validateJWT} = require('../middleware/validate-jwt');
@@ -10,7 +9,7 @@ const {check} = require('express-validator');
 
 const router = Router();
 
-router.get('/', getDoctors);
+router.get('/', validateJWT, getDoctors);
 router.post('/',
     [validateJWT,
         check('name', 'Input name file is require').not().isEmpty(),
@@ -18,11 +17,9 @@ router.post('/',
         validateFields
     ], postDoctors);
 
-router.put('/:id',
-    [],
-    updateDoctors);
+router.put('/:id', validateJWT, updateDoctors);
 
-router.delete('/:id', deleteDoctors);
+router.delete('/:id', validateJWT, deleteDoctors);
 
 
 module.exports = router;

@@ -38,18 +38,72 @@ const postDoctors = async (req, res = response) => {
 
 }
 
-const updateDoctors = (req, res = response) =>{
-    res.json({
-        ok: true,
-        msg: 'Working controller Update doctors'
-    })
+const updateDoctors = async (req, res = response) =>{
+    const id = req.params.id;
+
+    try{
+        const doctors = await Doctor.findById(id);
+        const uid = req.uid;
+
+        if(!doctors){
+            return res.status(404).json({
+                ok: true,
+                msg: "Error: The doctor data does not exist",
+            })
+        }
+
+        //Data Change Doctor
+        const changeDoctor = {
+            ...req.body,
+            user: uid
+        }
+
+        //Update data Doctor Mongo DB
+        const doctorUpdate = await  Doctor.findByIdAndUpdate(id, changeDoctor, {new : true})
+
+        res.status(200).json({
+            ok: true,
+            msg: 'Hospital updated successfully...',
+            doctorUpdate
+        });
+
+    }catch (e) {
+        console.log(e);
+        res.status(401).json({
+            ok: false,
+            msg: 'Error: Failed to update the doctor...'
+        })
+    }
+
+
 }
 
-const deleteDoctors = (req, res = response) => {
-    res.json({
-        ok: true,
-        msg: 'Working controller Delete doctors'
-    })
+const deleteDoctors = async (req, res = response) => {
+    const id = req.params.id
+    try{
+    const doctors = await Doctor.findById(id);
+        if(!doctors){
+            return res.status(404).json({
+                ok: true,
+                msg: "Error: The doctor data does not exist",
+            })
+        }
+
+        await Doctor.findByIdAndDelete(id);
+
+        res.status(200).json({
+            ok: true,
+            msg: "Doctor has been removed..."
+        })
+
+    }catch (e) {
+        console.log(e);
+        res.status(401).json({
+            ok: false,
+            msg: 'Error: Failed to remove the doctor...'
+        })
+    }
+
 }
 
 
