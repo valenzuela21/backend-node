@@ -18,7 +18,7 @@ router.post('/', [
 
 
 router.post('/google', [
-    check('token', 'He password input is required').not().isEmpty(),
+    check('token', 'He token input is required').not().isEmpty(),
     validateFields], googleSingAuth);
 
 router.get('/renew', validateJWT, renewToken);

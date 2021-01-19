@@ -14,9 +14,7 @@ router.put('/:type/:id', [
     validateJWT
 ], fileUpload);
 
-router.get('/:type/:photo', [
-    validateJWT
-], returnImage);
+router.get('/:type/:photo', returnImage);
 
 
 module.exports = router;

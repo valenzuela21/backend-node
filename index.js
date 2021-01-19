@@ -28,6 +28,7 @@ app.use('/api/search', require('./routes/search.routers'));
 app.use('/api/upload', require('./routes/uploads.routers'));
 
 /*
+*Acces Mongo DB Compas
 * user: main_user
 * pass: FpD1Dg8cEyvgOreL
 * */

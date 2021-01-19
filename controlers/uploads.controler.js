@@ -27,7 +27,7 @@ const fileUpload = async (req, res = response) => {
         })
     }
 
-    // Process he imagen
+    // Process he image
     const file = req.files.image;
 
     const nameSplit =  file.name.split('.');

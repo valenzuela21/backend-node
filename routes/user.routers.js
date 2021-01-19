@@ -12,7 +12,7 @@ const router = Router();
 
 router.get('/', validateJWT , getUsers);
 router.post('/',
-    [   validateJWT,
+    [
         check('name', 'He name input required.').not().isEmpty(),
         check('password', 'He password input required.').not().isEmpty(),
         check('email', 'He email input required.').isEmail(),

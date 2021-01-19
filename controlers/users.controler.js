@@ -1,25 +1,25 @@
-const { response } = require('express');
-const  bcrypt = require('bcryptjs');
+const {response} = require('express');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const {generateJWT} = require('../helpers/jwt')
 
 const getUsers = async (req, res) => {
     const page = Number(req.query.of) || 0;
 
-/*    const users = await User.find({}, 'name email role google')
-                            .skip(page)
-                            .limit(5);
+    /*    const users = await User.find({}, 'name email role google')
+                                .skip(page)
+                                .limit(5);
 
-    const total = await User.count();*/
+        const total = await User.count();*/
 
     const [users, total] = await Promise.all([
         User.find({}, 'name email role google image')
             .skip(page)
-            .limit(5),
+            .limit(10),
         User.countDocuments()
     ]);
 
-   res.json({
+    res.json({
         ok: true,
         users,
         total
@@ -30,10 +30,10 @@ const getUsers = async (req, res) => {
 const postUsers = async (req, res = response) => {
     const {password, email} = req.body;
 
-    try{
+    try {
         const existEmail = await User.findOne({email});
 
-        if(existEmail){
+        if (existEmail) {
             return res.status(400).json({
                 ok: false,
                 msg: "¡He email is registered!"
@@ -59,7 +59,7 @@ const postUsers = async (req, res = response) => {
             token
         })
 
-    }catch (e) {
+    } catch (e) {
         console.log(e);
         res.status(500).json({
             ok: false,
@@ -76,22 +76,22 @@ const putUsers = async (req, res = response) => {
 
     const uid = req.params.id;
 
-    try{
-        const userDB =  await User.findById(uid);
+    try {
+        const userDB = await User.findById(uid);
 
-        if(!userDB){
-            return  res.status(404).json({
+        if (!userDB) {
+            return res.status(404).json({
                 ok: false,
                 msg: "Error: ¡There is no user in the database!"
             });
         }
 
-        const {name, password, email,...inputs} = req.body;
+        const {name, password, email, ...inputs} = req.body;
 
-        if(userDB.email != email){
+        if (userDB.email != email) {
             const existsEmail = await User.findOne({email});
-            if(existsEmail){
-                return  res.status(400).json({
+            if (existsEmail) {
+                return res.status(400).json({
                     ok: false,
                     msg: "Error: ¡There is already a user with this email!"
                 });
@@ -99,17 +99,24 @@ const putUsers = async (req, res = response) => {
         }
 
         inputs.name = name;
-        inputs.email = email;
+        if (!userDB.google) {
+            inputs.email = email;
+        } else if (userDB.email !== email) {
+            return res.status(400).json({
+                ok: false,
+                msg: "Error: ¡Google users cannot change their mail¡"
+            });
+        }
 
         //Update User in DB
-        const userUpdate = await  User.findByIdAndUpdate(uid, inputs, {new: true});
+        const userUpdate = await User.findByIdAndUpdate(uid, inputs, {new: true});
 
         res.status(200).json({
             ok: true,
             userUpdate
         })
 
-    }catch (e) {
+    } catch (e) {
         console.log(`Error: Update user db: ${e}`);
         res.status(500).json({
             ok: true,
@@ -120,15 +127,15 @@ const putUsers = async (req, res = response) => {
 }
 
 
-const deleteUsers = async (req, res = response) =>{
+const deleteUsers = async (req, res = response) => {
 
-    const uid= req.params.id;
+    const uid = req.params.id;
 
-    try{
+    try {
 
-        const userID = await  User.findById(uid);
+        const userID = await User.findById(uid);
 
-        if(!userID){
+        if (!userID) {
             return res.json({
                 ok: true,
                 msg: 'There is no user with this id'
@@ -141,9 +148,9 @@ const deleteUsers = async (req, res = response) =>{
             msg: "¡User successfully removed!"
         });
 
-    }catch (e) {
+    } catch (e) {
         console.log(e);
-        return  res.status(200).json({
+        return res.status(200).json({
             ok: true,
             msg: 'Error in the administration...'
         });
